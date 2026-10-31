@@ -49,6 +49,7 @@ Actions use `launchctl kickstart`, `disable` / `bootout` and `enable` / `bootstr
 make            # universal binary + dist/Onit.dynamiclakeplugin
 make zip        # dist/Onit-x.y.z.zip for DynamicLake Market, with its SHA-256
 make demo       # print what the plugin would send for the tasks on this Mac
+make validate   # check those messages against the DynamicLake app running on this Mac
 make test       # unit tests
 make bead       # redraw Bead's frames (Tools/render-bead.swift)
 make icon       # redraw the icon (Tools/render-icon.swift)

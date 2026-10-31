@@ -3,6 +3,7 @@
 #   make            build a universal binary and assemble dist/Onit.dynamiclakeplugin
 #   make zip        also archive it for DynamicLake Market, with SHA-256 hashes
 #   make demo       print what the plugin would send for the tasks on this Mac
+#   make validate   check every message against the DynamicLake app running on this Mac
 #   make test       run the unit tests
 #   make bead       redraw Bead's frames
 #   make icon       redraw the plugin icon
@@ -12,7 +13,7 @@ DIST      := dist
 VERSION   := $(shell /usr/bin/python3 -c "import json;print(json.load(open('Package/$(PACKAGE)/plugin.json'))['version'])")
 BIN_DIR    = $(shell swift build -c release --arch arm64 --arch x86_64 --show-bin-path)
 
-.PHONY: all build package zip demo test bead icon clean
+.PHONY: all build package zip demo validate test bead icon clean
 
 all: package
 
@@ -39,6 +40,9 @@ demo:
 	DYNAMICLAKE_PLUGIN_FEATURES=lake,lakeLayout,numericText,presentSneakPeek,imageAssets \
 	DYNAMICLAKE_PLUGIN_PACKAGE="$(CURDIR)/Package/$(PACKAGE)" \
 	"$$(swift build --show-bin-path)/OnitLake" --demo
+
+validate:
+	@$(MAKE) -s demo 2>/dev/null | Tools/validate.py
 
 test:
 	swift test

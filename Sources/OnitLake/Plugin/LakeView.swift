@@ -19,7 +19,7 @@ enum LakeView {
             : [C.scroll(rows, spacing: 6)]
 
         return [
-            "leftSlot": C.asset(BeadPlayer.assetID, size: 36),
+            "leftSlot": C.asset(BeadPlayer.assetID),
             "title": C.text(headline(store: store)),
             "subtitle": C.text(summary(store: store, now: now)),
             "content": .array(content),

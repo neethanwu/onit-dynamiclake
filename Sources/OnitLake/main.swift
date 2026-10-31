@@ -43,6 +43,7 @@ MainActor.assumeIsolated {
         Task {
             presenter.start()
             await store.refresh()
+            presenter.renderEverything()
             try? await Task.sleep(for: .milliseconds(300))
             exit(0)
         }

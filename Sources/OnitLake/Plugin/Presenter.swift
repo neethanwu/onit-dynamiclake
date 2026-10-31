@@ -45,6 +45,19 @@ final class Presenter {
         bead.start(mood: .nothing)
     }
 
+    /// For `--demo`: renders the list, then every task's detail, so each lake can be checked.
+    func renderEverything() {
+        render()
+        for job in store.visibleJobs {
+            detailJobID = job.id
+            render()
+            copiedJobID = job.id
+            render()
+            copiedJobID = nil
+        }
+        detailJobID = nil
+    }
+
     // MARK: - Events
 
     func handle(_ message: JSON) {
