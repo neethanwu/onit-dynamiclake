@@ -1,0 +1,8 @@
+# Local planning and reference notes, not part of the plugin
+PLAN.md
+docs/dynamiclake/
+
+# Build output
+.build/
+*.zip
+.DS_Store
