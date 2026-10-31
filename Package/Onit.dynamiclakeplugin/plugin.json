@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "identifier": "com.neethanwu.onit",
+  "name": "onit",
+  "version": "0.1.0",
+  "developerName": "Neethan Wu",
+  "executable": "onit-lake",
+  "arguments": [],
+  "icon": "icon.png",
+  "autoStart": true,
+  "lake": {
+    "size": "big",
+    "glance": { "systemImage": "clock.badge.checkmark" }
+  },
+  "settings": [
+    {
+      "id": "announceFailures",
+      "type": "switch",
+      "title": "Show Failures Right Away",
+      "description": "Open the sneak peek for a moment when a task doesn't finish",
+      "systemImage": "exclamationmark.bubble",
+      "tint": "red",
+      "default": true
+    },
+    {
+      "id": "showNextUp",
+      "type": "switch",
+      "title": "Show the Next Run",
+      "description": "When all is well, keep a quiet countdown to the next task in the notch",
+      "systemImage": "clock",
+      "tint": "gray",
+      "default": false
+    },
+    {
+      "id": "animateBead",
+      "type": "switch",
+      "title": "Animate Bead",
+      "description": "Bead blinks, hops and shivers now and then, and runs while the lake is open",
+      "systemImage": "face.smiling",
+      "tint": "blue",
+      "default": true
+    },
+    {
+      "id": "help",
+      "type": "button",
+      "title": "About onit for DynamicLake",
+      "description": "What it reads, and how to use it with the onit app",
+      "buttonTitle": "Open",
+      "systemImage": "questionmark.circle",
+      "url": "https://github.com/neethanwu/onit-dynamiclake"
+    }
+  ]
+}

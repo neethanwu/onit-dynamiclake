@@ -6,3 +6,9 @@ docs/dynamiclake/
 .build/
 *.zip
 .DS_Store
+
+# Local experiments
+spike/
+
+# Build output
+dist/
