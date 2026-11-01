@@ -4,6 +4,9 @@ import Testing
 
 @Test func wrapsBetweenWords() {
     #expect(LakeView.wrap("one two three four", width: 9) == ["one two", "three", "four"])
+    let reason = "A file or folder it needs is missing. It may have been moved, renamed or deleted."
+    let lines = LakeView.wrap(reason, width: 74)
+    #expect(lines.count == 2 && lines.allSatisfy { $0.count <= 74 && $0.count > 20 })
 }
 
 @Test func encodesWholeNumbersAsIntegers() {

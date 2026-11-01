@@ -7,13 +7,14 @@
 #   make test       run the unit tests
 #   make bead       redraw Bead's frames
 #   make icon       redraw the plugin icon
+#   make ui         redraw the status dots and glyphs
 
 PACKAGE   := Onit.dynamiclakeplugin
 DIST      := dist
 VERSION   := $(shell /usr/bin/python3 -c "import json;print(json.load(open('Package/$(PACKAGE)/plugin.json'))['version'])")
 BIN_DIR    = $(shell swift build -c release --arch arm64 --arch x86_64 --show-bin-path)
 
-.PHONY: all build package zip demo validate test bead icon clean
+.PHONY: all build package zip demo validate test bead icon ui clean
 
 all: package
 
@@ -52,6 +53,9 @@ bead:
 
 icon:
 	swift Tools/render-icon.swift "Package/$(PACKAGE)/icon.png"
+
+ui:
+	swift Tools/render-ui.swift "Package/$(PACKAGE)"
 
 clean:
 	rm -rf .build "$(DIST)"

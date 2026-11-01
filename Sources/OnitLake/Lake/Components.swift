@@ -29,6 +29,14 @@ enum C {
         return .object(object)
     }
 
+    /// An image file at the root of the plugin package.
+    static func file(_ fileName: String, size: Int, actionID: String? = nil, title: String? = nil) -> JSON {
+        var object: [String: JSON] = ["type": "image", "source": "packageFile", "fileName": .string(fileName), "size": .number(Double(size))]
+        object["actionID"] = actionID.map(JSON.string)
+        object["title"] = title.map(JSON.string)
+        return .object(object)
+    }
+
     static func button(_ actionID: String, symbol: String? = nil, title: String? = nil, id: String? = nil,
                        shape: String? = nil, role: String? = nil, tint: String? = nil, size: Int? = nil) -> JSON {
         var object: [String: JSON] = ["type": "button", "actionID": .string(actionID)]

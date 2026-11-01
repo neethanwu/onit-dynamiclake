@@ -14,7 +14,7 @@ This is [onit](https://github.com/neethanwu/onit) as a DynamicLake plugin. It re
 
 - **Only when there's something to say.** A task running, one that just finished, one that didn't finish, or a schedule that runs more than you think. When all is well the notch stays yours. Turn on **Show the Next Run** if you want a quiet countdown anyway.
 - **Failures, explained.** The sneak peek opens for a moment when a task fails and says why in plain words ("A file or folder it needs is missing"), with a button to try again.
-- **The full list in the lake.** Every task with its schedule in words and when it runs next. Click a task for its detail: what went wrong, the schedule, recent runs, and Run Now, Pause, Copy for Your Agent and Open Log.
+- **The full list in the lake.** Every task with its schedule in words and when it runs next. Click a task's dot or › (or right-click › Show Details) for its detail: what went wrong, the schedule, recent runs, and Run Now, Pause, Copy for Your Agent and Open Log.
 - **Drag a fix to your agent.** Drag a failing task out of the lake and drop it into Claude Code, Codex or any chat: you get a ready prompt with the task's definition, schedule, exit code and the end of its log.
 - **Right-click a task** to run it, pause it, copy the fix prompt, open its log, show its plist in Finder, or hide it.
 - **DynaGlance.** onit has a button in the DynaGlance pill with the headline and the next three tasks.
@@ -53,6 +53,7 @@ make validate   # check those messages against the DynamicLake app running on th
 make test       # unit tests
 make bead       # redraw Bead's frames (Tools/render-bead.swift)
 make icon       # redraw the icon (Tools/render-icon.swift)
+make ui         # redraw the status dots and glyphs (Tools/render-ui.swift)
 Tools/test-agent.sh          # install a throwaway agent that runs, succeeds and fails
 Tools/test-agent.sh remove   # and remove it
 ```
