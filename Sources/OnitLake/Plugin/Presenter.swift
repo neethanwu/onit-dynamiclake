@@ -207,7 +207,7 @@ final class Presenter {
                 priority: "normal",
                 right: count > 1 ? C.text("\(count)", style: numericStyle, tint: "red") : C.status("failed", tint: "red"),
                 peekCenter: "\(headline) · \(reason)",
-                peekRight: C.button("run:\(Token.of(first))", symbol: "arrow.clockwise", id: "retry", tint: "red"),
+                peekRight: C.button("run:\(Token.of(first))", symbol: "arrow.clockwise", title: "Try Again", id: "retry", tint: "red"),
                 capsule: beadImage
             )
         }

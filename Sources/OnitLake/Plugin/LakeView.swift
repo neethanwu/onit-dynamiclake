@@ -72,7 +72,7 @@ enum LakeView {
                 C.vstack([C.text(job.name, weight: "medium", tint: job.state == .paused ? "gray" : nil), scheduleLine], spacing: 2),
                 C.spacer(),
                 C.vstack(trailing, spacing: 2, alignment: "trailing"),
-                C.button("open:\(token)", symbol: "chevron.right", shape: "plain", tint: "gray", size: 20),
+                C.button("open:\(token)", symbol: "chevron.right", title: "Details", shape: "plain", tint: "gray", size: 20),
             ],
             spacing: 6,
             id: "row-\(token)",
@@ -96,7 +96,7 @@ enum LakeView {
         let status = statusStyle(job)
         var content: [JSON] = [
             C.hstack([
-                C.button("back", symbol: "chevron.left", tint: "gray", size: 30),
+                C.button("back", symbol: "chevron.left", title: "All Tasks", tint: "gray", size: 30),
                 C.vstack([
                     C.text(job.name, style: "large", weight: "bold"),
                     C.hstack([
