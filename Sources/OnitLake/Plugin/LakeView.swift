@@ -72,10 +72,11 @@ enum LakeView {
                 C.vstack([C.text(job.name, weight: "medium", tint: job.state == .paused ? "gray" : nil), scheduleLine], spacing: 2),
                 C.spacer(),
                 C.vstack(trailing, spacing: 2, alignment: "trailing"),
-                C.button("open:\(token)", symbol: "chevron.right", shape: "plain", tint: "gray", size: 16),
+                C.button("open:\(token)", symbol: "chevron.right", shape: "plain", tint: "gray", size: 20),
             ],
             spacing: 6,
             id: "row-\(token)",
+            padding: ["trailing": 10],
             contextMenu: menu(for: job),
             drag: drag(for: job)
         )
@@ -95,7 +96,7 @@ enum LakeView {
         let status = statusStyle(job)
         var content: [JSON] = [
             C.hstack([
-                C.button("back", symbol: "chevron.left", shape: "plain", tint: "gray", size: 18),
+                C.button("back", symbol: "chevron.left", tint: "gray", size: 30),
                 C.vstack([
                     C.text(job.name, style: "large", weight: "bold"),
                     C.hstack([
@@ -110,13 +111,13 @@ enum LakeView {
         if let explanation {
             let streak = store.failureStreak(for: job)
             var lines: [JSON] = [C.text(streak > 1 ? "Didn't finish \(streak) times in a row" : "Didn't finish last time", weight: "semibold")]
-            lines += wrap(explanation.reason, width: 74).map { C.text($0, style: "compact") }
-            if let raw = explanation.rawLine { lines.append(C.text(raw, style: "compact", tint: "gray")) }
+            lines += wrap(explanation.reason, width: 74).map { C.text($0, style: "compact", weight: "regular") }
+            if let raw = explanation.rawLine { lines.append(C.text(raw, style: "compact", weight: "regular", tint: "gray")) }
             content.append(card(glyph: "glyph-failed.png", lines: lines))
         } else if job.schedule.hasOverlap {
             content.append(card(glyph: "glyph-headsup.png", lines: [
                 C.text("Runs more often than you might think", weight: "semibold"),
-                C.text("\(ScheduleText.summary(job.schedule)). That's about \(ScheduleText.runsPerDay(job.schedule)) runs a day.", style: "compact"),
+                C.text("\(ScheduleText.summary(job.schedule)). That's about \(ScheduleText.runsPerDay(job.schedule)) runs a day.", style: "compact", weight: "regular"),
             ]))
         }
 
@@ -124,22 +125,26 @@ enum LakeView {
         if let next = store.nextRun(for: job, now: now) { facts.append(("Next run", TimeText.dayAndTime(next, now: now))) }
         facts.append(("What it runs", JobNaming.whatItRuns(job)))
         content.append(C.vstack(facts.map { label, value in
-            C.hstack([C.text(label, style: "compact", tint: "gray"), C.spacer(), C.text(value, style: "compact")], spacing: 8)
+            C.hstack([C.text(label, style: "compact", weight: "regular", tint: "gray"), C.spacer(), C.text(value, style: "compact", weight: "regular")], spacing: 8)
         }, spacing: 5, padding: ["top": 4, "bottom": 4]))
 
         if !job.isAlwaysOn {
             let runs = Array(store.records(for: job).suffix(3).reversed())
             var section: [JSON] = [C.text("Recent runs", style: "compact", weight: "semibold")]
             if runs.isEmpty {
-                section.append(C.text("No runs recorded yet", style: "compact", tint: "gray"))
+                section.append(C.text("No runs recorded yet", style: "compact", weight: "regular", tint: "gray"))
             }
             section += runs.map { run in
                 let result = runResult(run)
-                return C.hstack([
-                    C.text(TimeText.runDay(run.end ?? run.start, now: now), style: "compact"),
+                var row = [
+                    C.text(TimeText.runDay(run.end ?? run.start, now: now), style: "compact", weight: "regular"),
                     C.spacer(),
                     C.text(result.text, style: "compact", tint: result.tint),
-                ], spacing: 8)
+                ]
+                if let duration = run.duration {
+                    row.append(C.text(TimeText.duration(duration), style: "compact", weight: "regular", tint: "gray"))
+                }
+                return C.hstack(row, spacing: 6)
             }
             content.append(C.vstack(section, spacing: 5, padding: ["top": 4, "bottom": 4]))
         }
@@ -154,24 +159,26 @@ enum LakeView {
                  spacing: 10, alignment: "top", padding: ["top": 2, "bottom": 6])
     }
 
+    /// Like onit's action bar: the main action, the fix prompt when there is one, then smaller
+    /// round buttons for pause and the log, so no label gets cut off.
     private static func actions(_ job: Job, token: String, copied: Bool) -> JSON {
         var buttons: [JSON] = [
             C.button("run:\(token)", symbol: "play.fill", title: job.isFailed ? "Try Again" : "Run Now", id: "act-run", shape: "roundedRect", tint: "blue"),
         ]
-        if job.source == .launchd {
-            buttons.append(job.state == .paused
-                ? C.button("resume:\(token)", symbol: "play", title: "Resume", id: "act-pause", shape: "roundedRect", tint: "gray")
-                : C.button("pause:\(token)", symbol: "pause.fill", title: "Pause", id: "act-pause", shape: "roundedRect", tint: "gray"))
-        }
         if job.isFailed || job.schedule.hasOverlap {
             buttons.append(C.button("copy:\(token)", symbol: copied ? "checkmark" : "doc.on.doc", title: copied ? "Copied" : "Copy for Your Agent",
                                     id: "act-copy", shape: "roundedRect", tint: copied ? "green" : (job.isFailed ? "red" : "orange")))
         }
-        if job.logPath != nil {
-            buttons.append(C.button("log:\(token)", symbol: "doc.text", title: "Open Log", id: "act-log", shape: "roundedRect", tint: "gray"))
-        }
         buttons.append(C.spacer())
-        return C.hstack(buttons, spacing: 8, padding: ["top": 6], drag: drag(for: job))
+        if job.source == .launchd {
+            buttons.append(job.state == .paused
+                ? C.button("resume:\(token)", symbol: "play", title: "Resume", id: "act-pause", tint: "gray", size: 30)
+                : C.button("pause:\(token)", symbol: "pause.fill", title: "Pause", id: "act-pause", tint: "gray", size: 30))
+        }
+        if job.logPath != nil {
+            buttons.append(C.button("log:\(token)", symbol: "doc.text", title: "Open Log", id: "act-log", tint: "gray", size: 30))
+        }
+        return C.hstack(buttons, spacing: 8, padding: ["top": 6, "bottom": 4], drag: drag(for: job))
     }
 
     // MARK: - Pieces
@@ -262,12 +269,11 @@ enum LakeView {
     }
 
     private static func runResult(_ run: RunRecord) -> (text: String, tint: String) {
-        let duration = run.duration.map { " · \(TimeText.duration($0))" } ?? ""
         switch run.exitCode {
         case nil where run.end == nil: return ("Running", "blue")
-        case nil: return ("Ran\(duration)", "gray")
-        case 0?: return ("OK\(duration)", "green")
-        case let code?: return ("Failed (code \(code))\(duration)", "red")
+        case nil: return ("Ran", "gray")
+        case 0?: return ("OK", "green")
+        case let code?: return ("Failed (code \(code))", "red")
         }
     }
 
