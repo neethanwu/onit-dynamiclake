@@ -22,3 +22,26 @@ import Testing
     let token = Token.of(job)
     #expect(token.allSatisfy { $0.isLetter || $0.isNumber || "._:-".contains($0) })
 }
+
+@Test func readsServicesFromTheGUIDomain() {
+    let output = """
+    gui/501 = {
+    \ttype = gui
+    \tservices = {
+    \t\t       0      0 \tcom.example.idle
+    \t\t     853      - \tdev.example.daemon
+    \t\t       0      1 \tcom.example.failed
+    \t\t       0   (pe) \tcom.example.note
+    \t}
+    \tunmanaged processes = {
+    \t\t     999      - \tnot.a.service
+    \t}
+    }
+    """
+    let services = LaunchdScanner.parseServices(output)
+    #expect(services.count == 4)
+    #expect(services["com.example.idle"]?.pid == nil)
+    #expect(services["dev.example.daemon"]?.pid == 853)
+    #expect(services["com.example.failed"]?.status == 1)
+    #expect(services["not.a.service"] == nil)
+}

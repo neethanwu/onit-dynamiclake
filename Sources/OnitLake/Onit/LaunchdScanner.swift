@@ -92,8 +92,30 @@ enum LaunchdScanner {
     }
 
     /// Parses `launchctl list`: PID, last exit status and label for every loaded job.
+    /// Changed for the DynamicLake plugin: asks for the GUI domain by name. `launchctl list` answers for
+    /// the caller's own launchd context, and a process DynamicLake launches doesn't see the user's agents there.
     static func loadedJobs() -> [String: Loaded] {
-        parseList(Shell.launchctl("list").output)
+        let services = parseServices(Shell.launchctl("print", Shell.guiDomain).output)
+        return services.isEmpty ? parseList(Shell.launchctl("list").output) : services
+    }
+
+    /// Parses the `services` block of `launchctl print gui/<uid>`: PID (0 when not running),
+    /// last exit status ("-" when it hasn't exited, or a note such as "(pe)") and label.
+    static func parseServices(_ output: String) -> [String: Loaded] {
+        var result: [String: Loaded] = [:]
+        var inServices = false
+        for line in output.split(separator: "\n") {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            if !inServices {
+                if trimmed == "services = {" { inServices = true }
+                continue
+            }
+            if trimmed == "}" { break }
+            let columns = trimmed.split(whereSeparator: { $0 == " " || $0 == "\t" })
+            guard columns.count >= 3, let pid = Int32(columns[0]) else { continue }
+            result[String(columns[2])] = Loaded(pid: pid == 0 ? nil : pid, status: Int32(columns[1]) ?? 0)
+        }
+        return result
     }
 
     static func parseList(_ output: String) -> [String: Loaded] {

@@ -16,6 +16,7 @@ final class Store {
     let history = RunHistory()
     private var prefs: Prefs
     private var pollTask: Task<Void, Never>?
+    private var loggedFirstScan = false
     var onChange: (() -> Void)?
 
     private static let pollInterval: Duration = .seconds(10)
@@ -45,6 +46,11 @@ final class Store {
             var job = job
             job.isHidden = prefs.hidden.contains(job.id) || (job.looksSystemOwned && !prefs.shown.contains(job.id))
             return job
+        }
+        if !loggedFirstScan {
+            loggedFirstScan = true
+            let states = updated.filter { !$0.isHidden }.map { "\($0.label)=\($0.state)" }.joined(separator: ", ")
+            Log.write("first scan: \(states)")
         }
         history.observe(updated.filter { !$0.isHidden })
         updated = updated.map(applyHistory)

@@ -63,6 +63,7 @@ final class Presenter {
     func handle(_ message: JSON) {
         switch message["type"]?.string {
         case "action":
+            Log.write("action \(message["actionID"]?.string ?? "?") from \(message["surface"]?.string ?? "?")")
             if let action = message["actionID"]?.string { perform(action) }
         case "lakeOpened":
             lakeOpen = true
